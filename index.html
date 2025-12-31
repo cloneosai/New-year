@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>New Beginnings ✨</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Antonio:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #0f172a;
+  --pastel1: #fbcfe8;
+  --pastel2: #c7d2fe;
+  --glass: rgba(255,255,255,0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Antonio', sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top, #1e293b, var(--bg));
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.center {
+  z-index: 2;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  background: var(--glass);
+  padding: 30px 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  animation: fadeIn 2s ease;
+}
+
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  color: var(--pastel2);
+}
+
+#countdown {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  opacity: 0.8;
+}
+
+.popup {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.popup-content {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(15px);
+  padding: 35px;
+  border-radius: 24px;
+  max-width: 520px;
+  text-align: center;
+  animation: pop 0.8s ease;
+}
+
+.popup-content h2 {
+  font-size: 2.2rem;
+  color: var(--pastel1);
+}
+
+.popup-content p {
+  margin-top: 15px;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="center" id="waiting">
+  <h1>New Beginnings ✨</h1>
+  <div id="countdown">Loading countdown...</div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h2>Happy New Year 🎆</h2>
+    <p>
+      To the most precious person in my life..<br><br>
+      ik we met unexpectedly but this was the best thing that happened to me this year..<br>
+      so i wanna start this new year with u..<br>
+      with new beginnings and new dreams..<br><br>
+      i wanna celebrate each new year with you forever..<br><br>
+      <strong>Happy new year my love 🫶🏻</strong>
+    </p>
+  </div>
+</div>
+
+<script>
+/* ===== TIME CHECK ===== */
+const targetDate = new Date("December 1, 2025 00:00:00").getTime();
+const countdownEl = document.getElementById("countdown");
+const popup = document.getElementById("popup");
+const waiting = document.getElementById("waiting");
+
+setInterval(() => {
+  const now = new Date().getTime();
+  const diff = targetDate - now;
+
+  if (diff <= 0) {
+    waiting.style.display = "none";
+    popup.style.display = "flex";
+    startFireworks();
+    return;
+  }
+
+  const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const m = Math.floor((diff / (1000 * 60)) % 60);
+  const s = Math.floor((diff / 1000) % 60);
+
+  countdownEl.innerHTML = `${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
+
+/* ===== FIREWORKS ===== */
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let particles = [];
+
+function random(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function createFirework() {
+  const x = random(100, canvas.width - 100);
+  const y = random(50, canvas.height / 2);
+  const colors = ["#fbcfe8", "#c7d2fe", "#fde68a"];
+
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x,
+      y,
+      angle: Math.random() * Math.PI * 2,
+      speed: random(2, 6),
+      radius: random(1, 3),
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 100
+    });
+  }
+}
+
+function startFireworks() {
+  setInterval(createFirework, 900);
+  animate();
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach((p, i) => {
+    p.x += Math.cos(p.angle) * p.speed;
+    p.y += Math.sin(p.angle) * p.speed;
+    p.life--;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+
+    if (p.life <= 0) particles.splice(i, 1);
+  });
+
+  requestAnimationFrame(animate);
+}
+
+window.onresize = () => {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+};
+</script>
+
+</body>
+</html>
